@@ -2,7 +2,7 @@ import pandas as pd
 from scipy import stats
 import numpy as np
 
-df=pd.read_csv('D:/temp/thaliana_database/ATH_GO_BP.txt',sep='\t',header=None)#1,Select biological process; 2,Remove genes that not in ath10.gtf annotation file; 3,remove lines that GO is 0008150.
+df=pd.read_csv('ATH_GO_BP.txt',sep='\t',header=None)#1,Select biological process; 2,Remove genes that not in ath10.gtf annotation file; 3,remove lines that GO is 0008150.
 tmp=df.drop_duplicates(0)
 N_genes=[e for e in tmp[0]]
 N=tmp.shape[0]#Number of genes related to overall biological process in the genome
@@ -51,4 +51,5 @@ df=df.sort_values('-log10(pvalue)',ascending=False)
 df=pd.merge(df,anno,on='GO',how='left')
 df=df[['GO','-log10(pvalue)','annotation','genes']]
 df.to_csv('pvalue.txt',sep='\t',index=None)
+
 
