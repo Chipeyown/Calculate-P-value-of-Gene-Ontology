@@ -2,10 +2,14 @@ import pandas as pd
 from scipy import stats
 import numpy as np
 
-df=pd.read_csv('ATH_GO_BP.txt',sep='\t',header=None)#1,Select biological process; 2,Remove genes that not in ath10.gtf annotation file; 3,remove lines that GO is 0008150.
+df=pd.read_csv('D:/temp/thaliana_database/ATH_GO_BP.txt',sep='\t',header=None)#1,Select biological process; 2,Remove genes that not in ath10.gtf annotation file; 3,remove lines that GO is 0008150.
 tmp=df.drop_duplicates(0)
 N_genes=[e for e in tmp[0]]
 N=tmp.shape[0]#Number of genes related to overall biological process in the genome
+
+anno=df[[4,5]]
+anno=anno.rename(columns={4:'annotation',5:'GO'})
+anno=anno.drop_duplicates()
 
 df=df[[0,5]]
 df=df.drop_duplicates()
@@ -21,7 +25,7 @@ M_lib={}#The number of genes related to a specific biological process in the gen
 for key,value in lib.items():
     M_lib[key]=len(value)
 
-df2=pd.read_csv('upregulated_gene.data',sep='\t')
+df2=pd.read_csv('upregulated_gene.txt',sep='\t')
 df2=df2.drop_duplicates('gene_id')
 genes=[e for e in df2['gene_id'] if e in N_genes]
 n=len(genes)#Number of upregulated genes related to overall biological process in the genome
@@ -44,4 +48,7 @@ fa.close()
 
 df=pd.read_csv('pvalue.txt',sep='\t')
 df=df.sort_values('-log10(pvalue)',ascending=False)
+df=pd.merge(df,anno,on='GO',how='left')
+df=df[['GO','-log10(pvalue)','annotation','genes']]
 df.to_csv('pvalue.txt',sep='\t',index=None)
+
